@@ -1,161 +1,288 @@
 <?php
 /**
- * Damsko functions and definitions
+ * Genesis Sample.
  *
- * @link https://developer.wordpress.org/themes/basics/theme-functions/
+ * This file adds functions to the Genesis Sample Theme.
  *
- * @package Damsko
+ * @package Genesis Sample
+ * @author  StudioPress
+ * @license GPL-2.0+
+ * @link    https://www.studiopress.com/
  */
 
-if ( ! function_exists( 'damsko_setup' ) ) :
-	/**
-	 * Sets up theme defaults and registers support for various WordPress features.
-	 *
-	 * Note that this function is hooked into the after_setup_theme hook, which
-	 * runs before the init hook. The init hook is too late for some features, such
-	 * as indicating support for post thumbnails.
-	 */
-	function damsko_setup() {
-		/*
-		 * Make theme available for translation.
-		 * Translations can be filed in the /languages/ directory.
-		 * If you're building a theme based on Damsko, use a find and replace
-		 * to change 'damsko' to the name of your theme in all the template files.
-		 */
-		load_theme_textdomain( 'damsko', get_template_directory() . '/languages' );
+// Starts the engine.
+require_once get_template_directory() . '/lib/init.php';
 
-		// Add default posts and comments RSS feed links to head.
-		add_theme_support( 'automatic-feed-links' );
+// Sets up the Theme.
+require_once get_stylesheet_directory() . '/lib/theme-defaults.php';
 
-		/*
-		 * Let WordPress manage the document title.
-		 * By adding theme support, we declare that this theme does not use a
-		 * hard-coded <title> tag in the document head, and expect WordPress to
-		 * provide it for us.
-		 */
-		add_theme_support( 'title-tag' );
+add_action( 'after_setup_theme', 'genesis_sample_localization_setup' );
+/**
+ * Sets localization (do not remove).
+ *
+ * @since 1.0.0
+ */
+function genesis_sample_localization_setup() {
 
-		/*
-		 * Enable support for Post Thumbnails on posts and pages.
-		 *
-		 * @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
-		 */
-		add_theme_support( 'post-thumbnails' );
+	load_child_theme_textdomain( 'genesis-sample', get_stylesheet_directory() . '/languages' );
 
-		// This theme uses wp_nav_menu() in one location.
-		register_nav_menus( array(
-			'menu-1' => esc_html__( 'Primary', 'damsko' ),
-		) );
+}
 
-		/*
-		 * Switch default core markup for search form, comment form, and comments
-		 * to output valid HTML5.
-		 */
-		add_theme_support( 'html5', array(
-			'search-form',
-			'comment-form',
-			'comment-list',
-			'gallery',
-			'caption',
-		) );
+// Adds helper functions.
+require_once get_stylesheet_directory() . '/lib/helper-functions.php';
 
-		// Set up the WordPress core custom background feature.
-		add_theme_support( 'custom-background', apply_filters( 'damsko_custom_background_args', array(
-			'default-color' => 'ffffff',
-			'default-image' => '',
-		) ) );
+// Adds image upload and color select to Customizer.
+require_once get_stylesheet_directory() . '/lib/customize.php';
 
-		// Add theme support for selective refresh for widgets.
-		add_theme_support( 'customize-selective-refresh-widgets' );
+// Includes Customizer CSS.
+require_once get_stylesheet_directory() . '/lib/output.php';
 
-		/**
-		 * Add support for core custom logo.
-		 *
-		 * @link https://codex.wordpress.org/Theme_Logo
-		 */
-		add_theme_support( 'custom-logo', array(
-			'height'      => 250,
-			'width'       => 250,
-			'flex-width'  => true,
-			'flex-height' => true,
-		) );
+// Adds WooCommerce support.
+require_once get_stylesheet_directory() . '/lib/woocommerce/woocommerce-setup.php';
+
+// Adds the required WooCommerce styles and Customizer CSS.
+require_once get_stylesheet_directory() . '/lib/woocommerce/woocommerce-output.php';
+
+// Adds the Genesis Connect WooCommerce notice.
+require_once get_stylesheet_directory() . '/lib/woocommerce/woocommerce-notice.php';
+
+// Defines the child theme (do not remove).
+define( 'CHILD_THEME_NAME', 'Genesis Sample' );
+define( 'CHILD_THEME_URL', 'https://www.studiopress.com/' );
+define( 'CHILD_THEME_VERSION', '2.6.0' );
+
+add_action( 'wp_enqueue_scripts', 'genesis_sample_enqueue_scripts_styles' );
+/**
+ * Enqueues scripts and styles.
+ *
+ * @since 1.0.0
+ */
+function genesis_sample_enqueue_scripts_styles() {
+
+	wp_enqueue_style(
+		'genesis-sample-fonts',
+		'//fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,700',
+		array(),
+		CHILD_THEME_VERSION
+	);
+	wp_enqueue_style( 'dashicons' );
+
+	$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+	wp_enqueue_script(
+		'genesis-sample-responsive-menu',
+		get_stylesheet_directory_uri() . "/js/responsive-menus{$suffix}.js",
+		array( 'jquery' ),
+		CHILD_THEME_VERSION,
+		true
+	);
+	wp_localize_script(
+		'genesis-sample-responsive-menu',
+		'genesis_responsive_menu',
+		genesis_sample_responsive_menu_settings()
+	);
+
+	wp_enqueue_script(
+		'genesis-sample',
+		get_stylesheet_directory_uri() . '/js/genesis-sample.js',
+		array( 'jquery' ),
+		CHILD_THEME_VERSION,
+		true
+	);
+
+}
+
+/**
+ * Defines responsive menu settings.
+ *
+ * @since 2.3.0
+ */
+function genesis_sample_responsive_menu_settings() {
+
+	$settings = array(
+		'mainMenu'         => __( 'Menu', 'genesis-sample' ),
+		'menuIconClass'    => 'dashicons-before dashicons-menu',
+		'subMenu'          => __( 'Submenu', 'genesis-sample' ),
+		'subMenuIconClass' => 'dashicons-before dashicons-arrow-down-alt2',
+		'menuClasses'      => array(
+			'combine' => array(
+				'.nav-primary',
+			),
+			'others'  => array(),
+		),
+	);
+
+	return $settings;
+
+}
+
+// Sets the content width based on the theme's design and stylesheet.
+if ( ! isset( $content_width ) ) {
+	$content_width = 702; // Pixels.
+}
+
+// Adds support for HTML5 markup structure.
+add_theme_support(
+	'html5', array(
+		'caption',
+		'comment-form',
+		'comment-list',
+		'gallery',
+		'search-form',
+	)
+);
+
+// Adds support for accessibility.
+add_theme_support(
+	'genesis-accessibility', array(
+		'404-page',
+		'drop-down-menu',
+		'headings',
+		'rems',
+		'search-form',
+		'skip-links',
+	)
+);
+
+// Adds viewport meta tag for mobile browsers.
+add_theme_support(
+	'genesis-responsive-viewport'
+);
+
+// Adds custom logo in Customizer > Site Identity.
+add_theme_support(
+	'custom-logo', array(
+		'height'      => 120,
+		'width'       => 700,
+		'flex-height' => true,
+		'flex-width'  => true,
+	)
+);
+
+// Renames primary and secondary navigation menus.
+add_theme_support(
+	'genesis-menus', array(
+		'primary'   => __( 'Header Menu', 'genesis-sample' ),
+		'secondary' => __( 'Footer Menu', 'genesis-sample' ),
+	)
+);
+
+// Adds support for after entry widget.
+add_theme_support( 'genesis-after-entry-widget-area' );
+
+// Adds support for 3-column footer widgets.
+add_theme_support( 'genesis-footer-widgets', 3 );
+
+// Removes header right widget area.
+unregister_sidebar( 'header-right' );
+
+// Removes secondary sidebar.
+unregister_sidebar( 'sidebar-alt' );
+
+// Removes site layouts.
+genesis_unregister_layout( 'content-sidebar-sidebar' );
+genesis_unregister_layout( 'sidebar-content-sidebar' );
+genesis_unregister_layout( 'sidebar-sidebar-content' );
+
+// Removes output of primary navigation right extras.
+remove_filter( 'genesis_nav_items', 'genesis_nav_right', 10, 2 );
+remove_filter( 'wp_nav_menu_items', 'genesis_nav_right', 10, 2 );
+
+add_action( 'genesis_theme_settings_metaboxes', 'genesis_sample_remove_metaboxes' );
+/**
+ * Removes output of unused admin settings metaboxes.
+ *
+ * @since 2.6.0
+ *
+ * @param string $_genesis_admin_settings The admin screen to remove meta boxes from.
+ */
+function genesis_sample_remove_metaboxes( $_genesis_admin_settings ) {
+
+	remove_meta_box( 'genesis-theme-settings-header', $_genesis_admin_settings, 'main' );
+	remove_meta_box( 'genesis-theme-settings-nav', $_genesis_admin_settings, 'main' );
+
+}
+
+add_filter( 'genesis_customizer_theme_settings_config', 'genesis_sample_remove_customizer_settings' );
+/**
+ * Removes output of header settings in the Customizer.
+ *
+ * @since 2.6.0
+ *
+ * @param array $config Original Customizer items.
+ * @return array Filtered Customizer items.
+ */
+function genesis_sample_remove_customizer_settings( $config ) {
+
+	unset( $config['genesis']['sections']['genesis_header'] );
+	return $config;
+
+}
+
+// Displays custom logo.
+add_action( 'genesis_site_title', 'the_custom_logo', 0 );
+
+// Repositions primary navigation menu.
+remove_action( 'genesis_after_header', 'genesis_do_nav' );
+add_action( 'genesis_header', 'genesis_do_nav', 12 );
+
+// Repositions the secondary navigation menu.
+remove_action( 'genesis_after_header', 'genesis_do_subnav' );
+add_action( 'genesis_footer', 'genesis_do_subnav', 10 );
+
+add_filter( 'wp_nav_menu_args', 'genesis_sample_secondary_menu_args' );
+/**
+ * Reduces secondary navigation menu to one level depth.
+ *
+ * @since 2.2.3
+ *
+ * @param array $args Original menu options.
+ * @return array Menu options with depth set to 1.
+ */
+function genesis_sample_secondary_menu_args( $args ) {
+
+	if ( 'secondary' !== $args['theme_location'] ) {
+		return $args;
 	}
-endif;
-add_action( 'after_setup_theme', 'damsko_setup' );
 
+	$args['depth'] = 1;
+	return $args;
+
+}
+
+add_filter( 'genesis_author_box_gravatar_size', 'genesis_sample_author_box_gravatar' );
 /**
- * Set the content width in pixels, based on the theme's design and stylesheet.
+ * Modifies size of the Gravatar in the author box.
  *
- * Priority 0 to make it available to lower priority callbacks.
+ * @since 2.2.3
  *
- * @global int $content_width
+ * @param int $size Original icon size.
+ * @return int Modified icon size.
  */
-function damsko_content_width() {
-	// This variable is intended to be overruled from themes.
-	// Open WPCS issue: {@link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/issues/1043}.
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-	$GLOBALS['content_width'] = apply_filters( 'damsko_content_width', 640 );
-}
-add_action( 'after_setup_theme', 'damsko_content_width', 0 );
+function genesis_sample_author_box_gravatar( $size ) {
 
+	return 90;
+
+}
+
+add_filter( 'genesis_comment_list_args', 'genesis_sample_comments_gravatar' );
 /**
- * Register widget area.
+ * Modifies size of the Gravatar in the entry comments.
  *
- * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
+ * @since 2.2.3
+ *
+ * @param array $args Gravatar settings.
+ * @return array Gravatar settings with modified size.
  */
-function damsko_widgets_init() {
-	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar', 'damsko' ),
-		'id'            => 'sidebar-1',
-		'description'   => esc_html__( 'Add widgets here.', 'damsko' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-}
-add_action( 'widgets_init', 'damsko_widgets_init' );
+function genesis_sample_comments_gravatar( $args ) {
 
-/**
- * Enqueue scripts and styles.
- */
-function damsko_scripts() {
-	wp_enqueue_style( 'damsko-style', get_stylesheet_uri() );
+	$args['avatar_size'] = 60;
+	return $args;
 
-	wp_enqueue_script( 'damsko-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
-
-	wp_enqueue_script( 'damsko-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
-
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
-}
-add_action( 'wp_enqueue_scripts', 'damsko_scripts' );
-
-/**
- * Implement the Custom Header feature.
- */
-require get_template_directory() . '/inc/custom-header.php';
-
-/**
- * Custom template tags for this theme.
- */
-require get_template_directory() . '/inc/template-tags.php';
-
-/**
- * Functions which enhance the theme by hooking into WordPress.
- */
-require get_template_directory() . '/inc/template-functions.php';
-
-/**
- * Customizer additions.
- */
-require get_template_directory() . '/inc/customizer.php';
-
-/**
- * Load Jetpack compatibility file.
- */
-if ( defined( 'JETPACK__VERSION' ) ) {
-	require get_template_directory() . '/inc/jetpack.php';
 }
 
+//* Change the footer text
+add_filter('genesis_footer_creds_text', 'sp_footer_creds_filter');
+function sp_footer_creds_filter( $creds ) {
+	$creds = '[footer_copyright] ' . get_bloginfo() . ' &middot; All rights reserved &middot; Powered by [footer_wordpress_link] and [footer_genesis_link] &middot; Developed with &#x2661; by <a href="#">Niels Lange</a>';
+	return $creds;
+}
