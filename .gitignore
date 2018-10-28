@@ -27,3 +27,4 @@ wp-content/plugins/*
 # Ignore everything in the "themes" directory, except specified themes
 wp-content/themes/*
 !wp-content/themes/damsko/
+wp-content/themes/damsko/lib/fontawesome-pro
