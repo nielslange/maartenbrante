@@ -89,6 +89,12 @@ function genesis_sample_enqueue_scripts_styles() {
 		true
 	);
 
+	wp_enqueue_style(
+		'fontawesome',
+		get_stylesheet_directory_uri() . '/lib/fontawesome-pro/css/all.css',
+		array(),
+		CHILD_THEME_VERSION
+	);
 }
 
 /**
@@ -283,6 +289,9 @@ function genesis_sample_comments_gravatar( $args ) {
 //* Change the footer text
 add_filter('genesis_footer_creds_text', 'sp_footer_creds_filter');
 function sp_footer_creds_filter( $creds ) {
-	$creds = '[footer_copyright] ' . get_bloginfo() . ' &middot; All rights reserved &middot; Powered by [footer_wordpress_link] and [footer_genesis_link] &middot; Developed with &#x2661; by <a href="#">Niels Lange</a>';
+	$creds  = '[footer_copyright] ' . get_bloginfo() . ' &middot; All rights reserved &middot; ';
+	$creds .= 'Powered by [footer_wordpress_link] and [footer_genesis_link] &middot; ';
+	$creds .= 'Developed with <abbr title="October 28, 2018 &middot; Jakarta, Indonesia"><i class="far fa-heart"></i></abbr> ';
+	$creds .= 'by <a href="https://nielslange.com" target="_blank" title="Niels Lange | WordPress Developer">Niels Lange</a>';
 	return $creds;
 }
