@@ -1,30 +1,34 @@
 <?php
-//* Add homepage body class
-add_filter( 'body_class', 'nl_home_body_class' );
-function nl_home_body_class( $classes ) {
-	$classes[] = 'full-width';
-	return $classes;
-}
 
 /**
- * Adds custom loop
+ * Adds landing page body class.
  *
  * @since 1.0
+ *
+ * @param array $classes Original body classes.
+ * @return array Modified body classes.
  */
+add_filter( 'body_class', 'nl_home_body_class' );
+function nl_home_body_class( $classes ) {
+
+	$classes[] = 'full-width';
+	return $classes;
+
+}
+
 remove_action( 'genesis_loop', 'genesis_do_loop' );
 add_action( 'genesis_loop', 'nl_custom_loop' );
 function nl_custom_loop() {
-	/*
+	//global $post;
 	// arguments, adjust as needed
-	$args = array(
+/*	$args = array(
 		'post_type'      => 'post',
 		//'posts_per_page' => 1,
 		'post_status'    => 'publish',
 		'paged'          => get_query_var( 'paged' )
 	);
 	global $wp_query;
-	$wp_query = new WP_Query( $args );
-	*/
+	$wp_query = new WP_Query( $args );*/
 	if ( have_posts() ) :
 		echo '<div class="posts">';
 		while ( have_posts() ) : the_post();

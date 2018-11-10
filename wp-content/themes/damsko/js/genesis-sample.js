@@ -59,3 +59,4 @@ var genesisSample = ( function( $ ) {
 })( jQuery );
 
 jQuery( window ).on( 'load', genesisSample.init );
+

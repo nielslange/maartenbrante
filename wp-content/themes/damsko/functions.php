@@ -290,8 +290,20 @@ function genesis_sample_comments_gravatar( $args ) {
 add_filter('genesis_footer_creds_text', 'sp_footer_creds_filter');
 function sp_footer_creds_filter( $creds ) {
 	$creds  = '[footer_copyright] ' . get_bloginfo() . ' &middot; All rights reserved &middot; ';
-	$creds .= 'Powered by [footer_wordpress_link] and [footer_genesis_link] &middot; ';
-	$creds .= 'Developed with <abbr title="October 28, 2018 &middot; Jakarta, Indonesia"><i class="far fa-heart"></i></abbr> ';
+	//$creds .= 'Powered by [footer_wordpress_link] and [footer_genesis_link] &middot; ';
+	$creds .= 'Developed with <abbr title="October 28, 2018 &middot; Jakarta, Indonesia"><i class="fa fa-heart"></i></abbr> ';
 	$creds .= 'by <a href="https://nielslange.com" target="_blank" title="Niels Lange | WordPress Developer">Niels Lange</a>';
 	return $creds;
 }
+
+//* Apply Content Sidebar content layout to single posts.
+add_filter( 'genesis_pre_get_option_site_layout', 'custom_set_single_posts_layout' );
+function custom_set_single_posts_layout() {
+	if ( is_single() ) {
+		return 'sidebar-content';
+	}
+}
+
+//* Reposition the breadcrumbs
+remove_action( 'genesis_before_loop', 'genesis_do_breadcrumbs' );
+add_action( 'genesis_loop', 'genesis_do_breadcrumbs' );
