@@ -28,3 +28,4 @@ wp-content/plugins/*
 wp-content/themes/*
 !wp-content/themes/damsko/
 wp-content/themes/damsko/lib/fontawesome-pro
+!wp-content/themes/monochrome-pro/
